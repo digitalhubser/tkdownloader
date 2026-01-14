@@ -16,7 +16,6 @@ if not os.path.exists(DOWNLOAD_FOLDER):
 # مخزن المهام (Status Store)
 tasks = {}
 
-
 def reset_storage():
     """مسح المجلدات القديمة عند بدء التشغيل"""
     if os.path.exists(DOWNLOAD_FOLDER):
@@ -24,7 +23,7 @@ def reset_storage():
     os.makedirs(DOWNLOAD_FOLDER)
 
 def cleanup_task(task_id, delay=300):
-    """مسح الملفات بعد فترة (5 دقائق لضمان تحميل الملفات المنفردة)"""
+    """مسح الملفات بعد فترة (5 دقائق)"""
     time.sleep(delay)
     folder_path = os.path.join(DOWNLOAD_FOLDER, task_id)
     zip_path = os.path.join(DOWNLOAD_FOLDER, f"{task_id}.zip")
@@ -33,34 +32,38 @@ def cleanup_task(task_id, delay=300):
     if os.path.exists(zip_path):
         os.remove(zip_path)
 
-
 def download_task(url, quality, task_id):
     folder_path = os.path.join(DOWNLOAD_FOLDER, task_id)
     os.makedirs(folder_path, exist_ok=True)
-   ydl_opts = {
-        'cookiefile': 'cookies.txt',  # السطر الأهم لتجاوز حظر البوت
+    
+    # إعدادات متطورة لتجاوز حظر يوتيوب
+    ydl_opts = {
+        'cookiefile': 'cookies.txt',  # يجب رفع ملف cookies.txt بجانب هذا الملف
         'nocheckcertificate': True,
         'geo_bypass': True,
         'quiet': True,
-       'playlistend': 50,
+        'no_warnings': True,
+        'playlistend': 50,
+        'extract_flat': False,
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+        'referer': 'https://www.google.com/',
         'format': f"bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best",
-        'outtmpl': os.path.join(folder_path, '%(title)s.%(ext)s')
+        'outtmpl': os.path.join(folder_path, '%(title)s.%(ext)s'),
+        'merge_output_format': 'mp4',
     }
+    
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
         
-        # محاولة الضغط (المرحلة الحساسة)
+        # محاولة الضغط
         zip_path = os.path.join(DOWNLOAD_FOLDER, f"{task_id}.zip")
         try:
-            # نقوم بالضغط
             shutil.make_archive(zip_path.replace('.zip', ''), 'zip', folder_path)
             tasks[task_id]['status'] = 'finished'
             tasks[task_id]['file'] = f"{task_id}.zip"
         except Exception as zip_error:
             print(f"Zip Failed: {zip_error}")
-            # الحل البديل: إرسال أسماء الملفات المحملة
             files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
             tasks[task_id]['status'] = 'fallback'
             tasks[task_id]['files'] = files
@@ -78,8 +81,13 @@ def index():
 
 @app.route('/download', methods=['POST'])
 def start_download():
-    url = request.json.get('url')
-    quality = request.json.get('quality', '720')
+    data = request.json
+    url = data.get('url')
+    quality = data.get('quality', '720')
+    
+    if not url:
+        return jsonify({'error': 'رابط غير صحيح'}), 400
+        
     task_id = str(uuid.uuid4())
     tasks[task_id] = {'status': 'downloading', 'progress': 0}
     
@@ -99,11 +107,8 @@ def download_single(task_id, filename):
     directory = os.path.join(DOWNLOAD_FOLDER, task_id)
     return send_from_directory(directory, filename, as_attachment=True)
 
-
 if __name__ == '__main__':
     reset_storage()
-    app.run(host='0.0.0.0', port=7860)
-
-
-
-
+    # استخدام المنفذ من متغيرات البيئة لـ Render
+    port = int(os.environ.get("PORT", 7860))
+    app.run(host='0.0.0.0', port=port)
