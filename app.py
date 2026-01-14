@@ -38,12 +38,29 @@ def download_task(url, quality, task_id):
     folder_path = os.path.join(DOWNLOAD_FOLDER, task_id)
     os.makedirs(folder_path, exist_ok=True)
 
+    # ydl_opts = {
+    #     'format': f"bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best",
+    #     'outtmpl': os.path.join(folder_path, '%(title)s.%(ext)s'),
+    #     'playlistend': 50, # صمام أمان لعدد الفيديوهات
+    #     'nocheckcertificate': True,
+    #     'quiet': True,
+    # }
     ydl_opts = {
+        # إعدادات تخطي الحظر (الجديدة)
+        'nocheckcertificate': True,
+        'geo_bypass': True,
+        'quiet': True,
+        'no_warnings': True,
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+        'referer': 'https://www.google.com/',
+        'add_header': [
+            'Accept-Language: en-US,en;q=0.9',
+        ],
+
+        # إعدادات التحميل (الأصلية)
         'format': f"bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best",
         'outtmpl': os.path.join(folder_path, '%(title)s.%(ext)s'),
-        'playlistend': 50, # صمام أمان لعدد الفيديوهات
-        'nocheckcertificate': True,
-        'quiet': True,
+        'playlistend': 50,
     }
     
 
@@ -103,3 +120,4 @@ def download_single(task_id, filename):
 if __name__ == '__main__':
     reset_storage()
     app.run(host='0.0.0.0', port=7860)
+
