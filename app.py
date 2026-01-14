@@ -37,14 +37,6 @@ def cleanup_task(task_id, delay=300):
 def download_task(url, quality, task_id):
     folder_path = os.path.join(DOWNLOAD_FOLDER, task_id)
     os.makedirs(folder_path, exist_ok=True)
-
-    # ydl_opts = {
-    #     'format': f"bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best",
-    #     'outtmpl': os.path.join(folder_path, '%(title)s.%(ext)s'),
-    #     'playlistend': 50, # صمام أمان لعدد الفيديوهات
-    #     'nocheckcertificate': True,
-    #     'quiet': True,
-    # }
    ydl_opts = {
         'cookiefile': 'cookies.txt',  # السطر الأهم لتجاوز حظر البوت
         'nocheckcertificate': True,
@@ -55,8 +47,6 @@ def download_task(url, quality, task_id):
         'format': f"bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best",
         'outtmpl': os.path.join(folder_path, '%(title)s.%(ext)s'),
     }
-    
-
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
@@ -113,5 +103,6 @@ def download_single(task_id, filename):
 if __name__ == '__main__':
     reset_storage()
     app.run(host='0.0.0.0', port=7860)
+
 
 
