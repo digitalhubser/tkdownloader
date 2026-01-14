@@ -5,10 +5,16 @@ import yt_dlp
 
 app = Flask(__name__)
 
-# دالة للتحقق من الرابط بشكل مرن جداً
+# دالة ذكية للتحقق من أن الرابط يخص يوتيوب فعلاً
 def is_valid_youtube_url(url):
-    pattern = r'^(https?://)?(www\.)?(youtube\.com|youtu\.be|m\.youtube\.com)/.+$'
-    return bool(re.match(pattern, url))
+    if not url:
+        return False
+    youtube_regex = (
+        r'(https?://)?(www\.)?'
+        '(youtube|youtu|youtube-nocookie)\.(com|be)/'
+        '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})'
+    )
+    return re.match(youtube_regex, url) is not None
 
 @app.route('/')
 def index():
@@ -16,15 +22,16 @@ def index():
 
 @app.route('/download', methods=['POST'])
 def download():
-    url = request.form.get('url')
+    # استلام الرابط من الفورم - تأكد أن name="url" في ملف index.html
+    url = request.form.get('url', '').strip()
     quality = request.form.get('quality', '720')
-    
-    if not url or not is_valid_youtube_url(url):
-        return jsonify({"error": "الرابط غير صحيح أو غير مدعوم"}), 400
 
-    # إعدادات التحميل مع دعم الكوكيز وتخطي الحظر
+    if not url or not is_valid_youtube_url(url):
+        return jsonify({"error": "عذراً، الرابط غير صحيح. تأكد من نسخ رابط فيديو يوتيوب"}), 400
+
+    # إعدادات yt-dlp الاحترافية
     ydl_opts = {
-        'cookiefile': 'cookies.txt',  # تأكد من رفع ملف cookies.txt بجانب هذا الملف
+        'cookiefile': 'cookies.txt',  # استخدام الملف الذي رفعته
         'nocheckcertificate': True,
         'geo_bypass': True,
         'quiet': True,
@@ -36,11 +43,16 @@ def download():
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            # استخراج المعلومات أولاً للتأكد من الرابط
+            # استخراج البيانات والتحميل
             info = ydl.extract_info(url, download=True)
-            return jsonify({"message": f"تم تحميل '{info.get('title')}' بنجاح!"})
+            video_title = info.get('title', 'فيديو غير معروف')
+            return jsonify({"message": f"تم بنجاح تحميل: {video_title}"})
     except Exception as e:
-        return jsonify({"error": f"فشل التحميل: {str(e)}"}), 500
+        # إذا فشل بسبب الكوكيز أو غيره، سنعرف السبب من هنا
+        error_msg = str(e)
+        if "sign in" in error_msg.lower():
+            return jsonify({"error": "يوتيوب يطلب تحديث ملف الكوكيز. يرجى استخراج ملف جديد."}), 403
+        return jsonify({"error": f"حدث خطأ أثناء التحميل: {error_msg}"}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 7860))
