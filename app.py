@@ -45,7 +45,7 @@ def download_task(url, quality, task_id):
        'playlistend': 50,
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
         'format': f"bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best",
-        'outtmpl': os.path.join(folder_path, '%(title)s.%(ext)s'),
+        'outtmpl': os.path.join(folder_path, '%(title)s.%(ext)s')
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -103,6 +103,7 @@ def download_single(task_id, filename):
 if __name__ == '__main__':
     reset_storage()
     app.run(host='0.0.0.0', port=7860)
+
 
 
 
