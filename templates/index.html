@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تك لتحميل</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>تك </h1>
+    <p>ديجيتال هاب بلس لتحميل من  الانترنت </p>
+    
+    <input type="text" id="videoUrl" placeholder="ضع رابط الفيديو أو قائمة التشغيل هنا...">
+    
+    <select id="videoQuality">
+        <option value="1080">1080p Full HD</option>
+        <option value="720" selected>720p HD</option>
+        <option value="480">480p SD</option>
+        <option value="360">360p Low</option>
+    </select>
+
+    <button id="startBtn" onclick="startDownload()">بدء التحميل الآن</button>
+    <button id="cancelBtn" onclick="cancelDownload()" style="display: none; background-color: #6c757d;">
+    إيقاف التحميل
+</button>
+
+    <div id="statusBox">
+        انتظار الرابط...
+    </div>
+    <hr class="">
+    <footer class="footer">
+            <p>
+                <i class="fas fa-exclamation-triangle"></i>
+                جميع الحقوق محفوظة لدي ديجيتال هاب بلس &copy;
+            </p>
+            <p class="version">الإصدار 1.0.0</p>
+        </footer>
+</div>
+<script src="/static/script.js"></script>
+</body>
+</html>
