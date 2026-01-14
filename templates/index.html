@@ -12,21 +12,21 @@
     <h1>تك </h1>
     <p>ديجيتال هاب بلس لتحميل من  الانترنت </p>
     
-    <input type="text" id="videoUrl"  placeholder="ضع رابط الفيديو أو قائمة التشغيل هنا...">
+    <input type="text" id="videoUrl" placeholder="ضع رابط الفيديو أو قائمة التشغيل هنا...">
     
-    <select id="quality">
+    <select id="videoQuality">
         <option value="1080">1080p Full HD</option>
         <option value="720" selected>720p HD</option>
         <option value="480">480p SD</option>
         <option value="360">360p Low</option>
     </select>
 
-    <button id="downloadBtn" onclick="startDownload()">بدء التحميل الآن</button>
+    <button id="startBtn" onclick="startDownload()">بدء التحميل الآن</button>
     <button id="cancelBtn" onclick="cancelDownload()" style="display: none; background-color: #6c757d;">
     إيقاف التحميل
 </button>
 
-    <div id="status">
+    <div id="statusBox">
         انتظار الرابط...
     </div>
     <hr class="">
@@ -41,5 +41,3 @@
 <script src="/static/script.js"></script>
 </body>
 </html>
-
-
