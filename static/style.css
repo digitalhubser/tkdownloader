@@ -48,7 +48,7 @@
             outline: none;
         }
 
-        #startBtn {
+        #downloadBtn {
             width: 100%;
             padding: 15px;
             background-color: #ff0000;
@@ -62,12 +62,12 @@
             margin-top: 10px;
         }
 
-        #startBtn:hover {
+        #downloadBtn:hover {
             background-color: #cc0000;
             transform: translateY(-2px);
         }
 
-        #statusBox {
+        #status {
             margin-top: 25px;
             padding: 15px;
             border-radius: 10px;
@@ -159,3 +159,4 @@ padding:10px;
     justify-content: center;
     gap: 6px;
 }
+
