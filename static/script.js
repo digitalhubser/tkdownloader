@@ -63,9 +63,7 @@
             startBtn.disabled = false;
         } 
         else if (data.status === 'failed') {
-            statusBox.innerHTML = `<p style="color: red;">❌ الرابط غير صحيح : </p>`;
+            statusBox.innerHTML = `<p style="color: red;">❌ الرابط غير صحيح : ${data.error} </p>`;
             startBtn.disabled = false;
         }
     }
-    
-    // ${data.error}
