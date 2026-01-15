@@ -13,7 +13,7 @@
 
         // تحضير الواجهة
         startBtn.disabled = true;
-        statusBox.innerHTML = '<div class="loading-spinner"></div><p>جاري التواصل مع السيرفر والتحميل من يوتيوب...</p>';
+        statusBox.innerHTML = '<div class="loading-spinner"></div><p> جاري التحميل...</p>';
         
         try {
             const response = await fetch('/download', {
@@ -63,7 +63,9 @@
             startBtn.disabled = false;
         } 
         else if (data.status === 'failed') {
-            statusBox.innerHTML = `<p style="color: red;">❌ الرابط غير صحيح : ${data.error} </p>`;
+            statusBox.innerHTML = `<p style="color: red;">❌ الرابط غير صحيح : </p>`;
             startBtn.disabled = false;
         }
     }
+// ${data.error}
+${data.error}
