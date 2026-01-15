@@ -13,7 +13,7 @@
 
         // تحضير الواجهة
         startBtn.disabled = true;
-        statusBox.innerHTML = '<div class="loading-spinner"></div><p> جاري التحميل...</p>';
+        statusBox.innerHTML = '<div class="loading-spinner"></div><p>جاري التحميل...</p>';
         
         try {
             const response = await fetch('/download', {
@@ -67,5 +67,3 @@
             startBtn.disabled = false;
         }
     }
-// ${data.error}
-${data.error}
